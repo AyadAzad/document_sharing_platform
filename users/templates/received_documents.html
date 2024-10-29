@@ -1,0 +1,36 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row bg-background">
+    {% include 'sidebar.html' %}
+    <main class="flex-1 p-6 bg-background">
+        {% include 'searchbar.html' %}
+        <h1 class="text-2xl font-bold mt-6">Received Documents</h1>
+        {% if documents %}
+            <table class="min-w-full mt-4 border-collapse">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border px-4 py-2">From</th>
+                        <th class="border px-4 py-2">File</th>
+                        <th class="border px-4 py-2">Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in documents %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="border px-4 py-2">{{ document.sender.username }}</td>
+                            <td class="border px-4 py-2">
+                                <a class="text-blue-500 hover:underline" href="{{ document.file.url }}">{{ document.file.name }}</a>
+                            </td>
+                            <td class="border px-4 py-2">{{ document.note }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="mt-4">No documents received.</p>
+        {% endif %}
+        <a href="/" class="mt-4 inline-block text-blue-500 hover:underline">Go back to the main page</a>
+    </main>
+</div>
+{% endblock content %}

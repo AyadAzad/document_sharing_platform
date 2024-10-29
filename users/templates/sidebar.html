@@ -1,0 +1,21 @@
+{% extends '_base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+    <aside class="w-64 bg-card text-card-foreground p-4 shadow-lg rounded-lg bg-blue-500 min-h-screen">
+    <div class="flex items-center mb-6">
+      <img src="https://openui.fly.dev/openui/64x64.svg?text=👤" alt="User Profile" class="rounded-full w-16 h-16 border-2 border-primary" />
+      <h2 class="ml-2 text-lg font-semibold">{{ user.username}}</h2>
+    </div>
+    <nav class="flex flex-col ">
+      <a href="#" class="py-2 text-white hover:bg-muted rounded transition duration-300">My Profile</a>
+      <a href="{% url 'base:received-documents' %}" class="py-2 text-white hover:bg-muted rounded transition duration-300">Shared Files</a>
+      <a href="{% url 'base:send_document' %}" class="py-2 text-white hover:bg-muted rounded transition duration-300">Upload Files</a>
+<form method="post" action="{% url 'base:logout' %}">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
+
+    </nav>
+  </aside>
+{% endif %}
+{% endblock %}
