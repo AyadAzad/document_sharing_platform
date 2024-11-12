@@ -1,0 +1,33 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row min-h-screen bg-gray-50">
+    {% include 'sidebar.html' %}
+
+    <main class="flex-1 p-8 bg-white shadow-lg rounded-lg mx-auto my-6 md:my-0 md:mx-8">
+        {% include 'searchbar.html' %}
+
+        <h1 class="text-3xl font-extrabold text-gray-800 mt-6 mb-4">Fill the Form to Send a Document</h1>
+
+        <form method="POST" enctype="multipart/form-data" action="{% url 'send_document' %}" class="space-y-6">
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">Share a File</h3>
+
+            {% csrf_token %}
+
+            <div class="space-y-4">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" class="w-full md:w-auto px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg
+                                        shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2
+                                        focus:ring-blue-500 focus:ring-opacity-50 transition duration-300">
+                Share
+            </button>
+        </form>
+
+        <a href="/" class="mt-8 inline-block text-blue-500 hover:underline transition duration-200">
+            &larr; Go back to the main page
+        </a>
+    </main>
+</div>
+{% endblock content %}
