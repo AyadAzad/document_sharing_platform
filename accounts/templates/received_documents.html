@@ -13,15 +13,29 @@
                     <h2 class="text-2xl font-semibold mb-4">📄 {{ transfer.title }} from
                         <span class="text-blue-600">{{ transfer.sender.email }}</span> at {{ transfer.transferred_at }}</h2>
                     <br>
-                        <div class="bg-gray-50 p-4 rounded-lg mt-4 border border-gray-600">
-                            <p class="italic text-gray-600">{{ transfer.documents.first.note }}</p>
-                        </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mt-4 border border-gray-600">
+                        <p class="italic text-gray-600">{{ transfer.documents.first.note }}</p>
+                    </div>
                     <br>
                     <ul class="list-disc pl-6 mb-4 space-y-2">
                         {% for document in transfer.documents.all %}
                             <li class="text-lg"><a href="{{ document.file.url }}" class="text-blue-500 hover:underline">{{ document.name }}</a></li>
                         {% endfor %}
                     </ul>
+
+                    {% if decrypted_files %}
+    <div class="mt-4">
+        <h3 class="font-semibold text-lg text-gray-800">Decrypted Files</h3>
+        <ul class="list-disc pl-6 mt-2">
+            {% for decrypted_file in decrypted_files %}
+                <li class="text-lg">
+                    <a href="{{ decrypted_file }}" class="text-blue-500 hover:underline"> {{ decrypted_file }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
                 </div>
             {% endfor %}
         </div>

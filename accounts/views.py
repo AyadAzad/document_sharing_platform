@@ -1,10 +1,10 @@
+from django.conf import settings
 from pathlib import Path
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from .forms import SignupForm, LoginForm, UploadFileForm
 from django.contrib.auth.decorators import login_required
-from .models import Documents, FileTransfer, CustomUser
+from .models import Documents, FileTransfer, CustomUser, UserKeys
 import os
 from quantcrypt.kem import Kyber
 from quantcrypt.cipher import KryptonKEM
@@ -98,10 +98,61 @@ def send_document(request):
     return render(request, "upload.html", {'form': form})
 
 
+
+
 @login_required
 def received_documents(request):
     transfers = (FileTransfer.objects.filter(recipient=request.user)
                  .select_related('sender')
-                 .prefetch_related('documents'))
+                 .prefetch_related('documents'))  # Prefetch related 'documents' to optimize queries
 
-    return render(request, 'received_documents.html', {'transfers': transfers})
+    # Assuming each FileTransfer has multiple documents, and you want to decrypt the AES key of the first document
+    users_key = get_object_or_404(UserKeys, user=request.user)
+    private_key = users_key.private_key
+
+    decrypted_files = []  # To hold the paths of decrypted files
+
+    # Get the first document from the first transfer, if it exists
+    first_transfer = transfers.first()
+    if first_transfer and first_transfer.documents.exists():
+        document = first_transfer.documents.first()  # Get the first document
+        aes = document.aes_key  # Access the AES key from the document
+
+        aes_temp_file_path = f"temp_aes_key.key"
+        decrypted_aes_path = f"private_key_{users_key.id}.key"  # Unique file name for each user
+
+        # Write the AES key to a temporary file
+        with open(aes_temp_file_path, "wb") as aes_key_file:
+            aes_key_file.write(aes)
+
+        # Decrypt the AES key using PQC
+        krypton = KryptonKEM(Kyber)
+        krypton.decrypt_to_file(private_key, Path(aes_temp_file_path), Path(decrypted_aes_path))
+
+        # Read the decrypted AES key
+        with open(decrypted_aes_path, "rb") as decrypted_aes_key:
+            original_key = decrypted_aes_key.read()
+
+        # Clean up the temporary files
+        os.remove(aes_temp_file_path)
+        os.remove(decrypted_aes_path)
+
+        # Now, use the decrypted AES key to decrypt the document
+        encrypted_file_path = document.file.path  # Assuming the document is stored locally
+        decrypted_file_name = f"decrypted_{document.name}"
+
+        # Set the path where decrypted file will be saved
+        decrypted_file_path = os.path.join(settings.MEDIA_ROOT, 'decrypted_files', decrypted_file_name)
+        os.makedirs(os.path.dirname(decrypted_file_path), exist_ok=True)
+
+        # Decrypt the file and save it
+        decrypt_file(encrypted_file_path, original_key, decrypted_file_path)
+
+        # Add the relative URL to the decrypted file for serving
+        decrypted_file_url = os.path.join('decrypted_files', decrypted_file_name)  # Remove 'media/' part
+        decrypted_files.append(decrypted_file_url)
+
+    else:
+        print("No documents found in the transfer.")
+
+    return render(request, 'received_documents.html', {'transfers': transfers, 'decrypted_files': decrypted_files})
