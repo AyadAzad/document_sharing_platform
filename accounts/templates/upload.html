@@ -5,12 +5,10 @@
     {% include 'sidebar.html' %}
 
     <main class="flex-1 p-8 bg-white shadow-lg rounded-lg mx-auto my-6 md:my-0 md:mx-8">
-        {% include 'searchbar.html' %}
-
-        <h1 class="text-3xl font-extrabold text-gray-800 mt-6 mb-4">Fill the Form to Send a Document</h1>
+        <h1 class="text-3xl font-extrabold text-gray-800 mt-6 mb-4">Upload documents</h1>
 
         <form method="POST" enctype="multipart/form-data" action="{% url 'send_document' %}" class="space-y-6">
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">Share a File</h3>
+            <h3 class="text-xl font-semibold text-gray-600 mb-2">Select one or more documents</h3>
 
             {% csrf_token %}
 

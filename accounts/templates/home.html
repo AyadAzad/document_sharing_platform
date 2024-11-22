@@ -1,13 +1,26 @@
 {% extends "_base.html" %}
 
 {% block content %}
-    <div class="flex flex-col md:flex-row bg-background ">
-  {% include 'sidebar.html' %}
-  <main class="flex-1 p-6 bg-background">
-    {% include 'searchbar.html' %}
-      {% include 'category.html' %}
-    {% include 'files.html' %}
-  </main>
+<div class="flex flex-col md:flex-row bg-background">
+    {% include 'sidebar.html' %}
+    <main class="flex-1 p-6 bg-background">
+        <section class="flex flex-row justify-between items-center p-3">
+            <div class="flex items-center space-x-4">
+                <!-- Logo Styling -->
+                <img src="/static/assets/kust logo.jpeg"
+                     alt="Komar University Logo"
+                     class="border border-gray-300 shadow-lg rounded-full transition-transform duration-300 hover:scale-105"
+                     width="100" height="100"/>
+                <!-- Title Styling -->
+                <h2 class="text-3xl font-bold text-blue-700 bg-gradient-to-r from-blue-500 to-green-400 text-transparent bg-clip-text animate-pulse">
+                    Komar Document Sharing Platform
+                </h2>
+            </div>
+        </section>
+
+        {% include 'category.html' %}
+        {% include 'files.html' %}
+    </main>
 </div>
 
 {% endblock content %}

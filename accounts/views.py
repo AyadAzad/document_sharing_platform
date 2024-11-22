@@ -1,21 +1,26 @@
-from django.conf import settings
-from pathlib import Path
-from django.shortcuts import render, redirect, get_object_or_404
+import os
+from django.shortcuts import redirect
 from django.contrib.auth import login, authenticate, logout
 from .forms import SignupForm, LoginForm, UploadFileForm
-from django.contrib.auth.decorators import login_required
 from .models import Documents, FileTransfer, CustomUser, UserKeys
-import os
 from quantcrypt.kem import Kyber
 from quantcrypt.cipher import KryptonKEM
-
 from .utils.aes_encryption import encrypt_file
 from .utils.aes_decryption import decrypt_file
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from pathlib import Path
 
 
 @login_required
 def home(request):
     return render(request, 'home.html', {})
+
+
+def user_information(request):
+    user_info = CustomUser.objects.get(id=request.user.id)
+    return render(request, 'my_profile.html', {'user_info': user_info})
 
 
 def signup_view(request):
@@ -98,61 +103,124 @@ def send_document(request):
     return render(request, "upload.html", {'form': form})
 
 
-
-
 @login_required
 def received_documents(request):
     transfers = (FileTransfer.objects.filter(recipient=request.user)
                  .select_related('sender')
                  .prefetch_related('documents'))  # Prefetch related 'documents' to optimize queries
 
-    # Assuming each FileTransfer has multiple documents, and you want to decrypt the AES key of the first document
     users_key = get_object_or_404(UserKeys, user=request.user)
     private_key = users_key.private_key
 
-    decrypted_files = []  # To hold the paths of decrypted files
+    # Dictionary to store decrypted files for each transfer
+    decrypted_files_by_transfer = {}
 
-    # Get the first document from the first transfer, if it exists
-    first_transfer = transfers.first()
-    if first_transfer and first_transfer.documents.exists():
-        document = first_transfer.documents.first()  # Get the first document
-        aes = document.aes_key  # Access the AES key from the document
+    # Iterate over each transfer and decrypt the associated documents
+    for transfer in transfers:
+        decrypted_files = []  # List to hold decrypted files for the current transfer
 
-        aes_temp_file_path = f"temp_aes_key.key"
-        decrypted_aes_path = f"private_key_{users_key.id}.key"  # Unique file name for each user
+        if transfer.documents.exists():
+            for document in transfer.documents.all():
+                aes = document.aes_key
 
-        # Write the AES key to a temporary file
-        with open(aes_temp_file_path, "wb") as aes_key_file:
-            aes_key_file.write(aes)
+                aes_temp_file_path = f"temp_aes_key_{document.id}.key"
+                decrypted_aes_path = f"private_key_{users_key.id}.key"
 
-        # Decrypt the AES key using PQC
-        krypton = KryptonKEM(Kyber)
-        krypton.decrypt_to_file(private_key, Path(aes_temp_file_path), Path(decrypted_aes_path))
+                # Write the AES key to a temporary file
+                with open(aes_temp_file_path, "wb") as aes_key_file:
+                    aes_key_file.write(aes)
 
-        # Read the decrypted AES key
-        with open(decrypted_aes_path, "rb") as decrypted_aes_key:
-            original_key = decrypted_aes_key.read()
+                # Decrypt the AES key using PQC
+                krypton = KryptonKEM(Kyber)
+                krypton.decrypt_to_file(private_key, Path(aes_temp_file_path), Path(decrypted_aes_path))
 
-        # Clean up the temporary files
-        os.remove(aes_temp_file_path)
-        os.remove(decrypted_aes_path)
+                # Read the decrypted AES key
+                with open(decrypted_aes_path, "rb") as decrypted_aes_key:
+                    original_key = decrypted_aes_key.read()
 
-        # Now, use the decrypted AES key to decrypt the document
-        encrypted_file_path = document.file.path  # Assuming the document is stored locally
-        decrypted_file_name = f"decrypted_{document.name}"
+                # Clean up the temporary files
+                os.remove(aes_temp_file_path)
+                os.remove(decrypted_aes_path)
 
-        # Set the path where decrypted file will be saved
-        decrypted_file_path = os.path.join(settings.MEDIA_ROOT, 'decrypted_files', decrypted_file_name)
-        os.makedirs(os.path.dirname(decrypted_file_path), exist_ok=True)
+                # Now, use the decrypted AES key to decrypt the document
+                encrypted_file_path = document.file.path  # Assuming the document is stored locally
+                decrypted_file_name = f"decrypted_{document.name}"
 
-        # Decrypt the file and save it
-        decrypt_file(encrypted_file_path, original_key, decrypted_file_path)
+                # Set the path where decrypted file will be saved
+                decrypted_file_path = os.path.join(settings.MEDIA_ROOT, 'decrypted_files', decrypted_file_name)
+                os.makedirs(os.path.dirname(decrypted_file_path), exist_ok=True)
 
-        # Add the relative URL to the decrypted file for serving
-        decrypted_file_url = os.path.join('decrypted_files', decrypted_file_name)  # Remove 'media/' part
-        decrypted_files.append(decrypted_file_url)
+                # Decrypt the file and save it
+                decrypt_file(encrypted_file_path, original_key, decrypted_file_path)
 
-    else:
-        print("No documents found in the transfer.")
+                # Remove any prefix like "encrypted_" or "decrypted_" from the document name
+                cleaned_file_name = document.name.lstrip("encrypted_").lstrip("decrypted_")
 
-    return render(request, 'received_documents.html', {'transfers': transfers, 'decrypted_files': decrypted_files})
+                # Create the URL for the decrypted file
+                decrypted_file_url = os.path.join(settings.MEDIA_URL, 'decrypted_files', decrypted_file_name)
+
+                # Append a dictionary with name and URL to the decrypted files list
+                decrypted_files.append({'name': cleaned_file_name, 'url': decrypted_file_url})
+
+        # Store decrypted files for the current transfer in the dictionary
+        decrypted_files_by_transfer[transfer] = decrypted_files
+
+    return render(request, 'received_documents.html', {'decrypted_files_by_transfer': decrypted_files_by_transfer})
+
+
+@login_required
+def sent_documents(request):
+    # Filter transfers where the current user is the sender
+    transfers = FileTransfer.objects.filter(sender=request.user).select_related('recipient').prefetch_related(
+        'documents')
+
+    # Dictionary to store the details of sent documents (no decryption needed)
+    sent_files_by_transfer = {}
+
+    # Iterate over each transfer and collect details about the sent documents
+    for transfer in transfers:
+        sent_files = []  # List to hold the sent files for the current transfer
+
+        if transfer.documents.exists():
+            for document in transfer.documents.all():
+                # Get document name and remove the 'encrypted_' or 'decrypted_' prefixes
+                cleaned_file_name = document.name.lstrip("encrypted_").lstrip("decrypted_")
+
+                # Add cleaned name and other metadata to the list
+                sent_files.append(
+                    {'name': cleaned_file_name, 'recipient': transfer.recipient.email, 'title': transfer.title})
+
+        # Store the list of sent files for the current transfer in the dictionary
+        sent_files_by_transfer[transfer] = sent_files
+
+    return render(request, 'sent_documents.html', {'sent_files_by_transfer': sent_files_by_transfer})
+
+
+def file_summary_view(request):
+    # Get sent or received files, adjust based on your logic
+    sent_transfers = Documents.objects.filter(sender=request.user)
+    received_transfers = Documents.objects.filter(recipient=request.user)
+
+    # Prepare data for the template
+    sent_summary = [
+        {
+            "title": transfer.title,
+            "file_count": transfer.documents.count()  # Assuming `documents` is a related name for files
+        }
+        for transfer in sent_transfers
+    ]
+
+    received_summary = [
+        {
+            "title": transfer.title,
+            "file_count": transfer.documents.count()
+        }
+        for transfer in received_transfers
+    ]
+
+    context = {
+        "sent_summary": sent_summary,
+        "received_summary": received_summary,
+    }
+
+    return render(request, 'files.html', context)

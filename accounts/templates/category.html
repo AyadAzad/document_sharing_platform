@@ -2,22 +2,17 @@
 {% block content %}
 
      <div class="grid grid-cols-2 gap-4 mb-6">
+         <a href="{% url 'sent_documents' %}">
       <div class="bg-gradient-to-r from-purple-400 to-blue-500 text-white p-4 rounded-lg shadow-md">
         <h3 class="font-semibold">Sent</h3>
-        <p>480 files</p>
       </div>
+         </a>
+
+         <a href="{% url 'received_documents' %}">
       <div class="bg-gradient-to-r from-green-400 to-blue-500 text-white p-4 rounded-lg shadow-md">
         <h3 class="font-semibold">Received</h3>
-        <p>180 files</p>
       </div>
-      <div class="bg-gradient-to-r from-yellow-400 to-red-500 text-white p-4 rounded-lg shadow-md">
-        <h3 class="font-semibold">Videos</h3>
-        <p>30 files</p>
-      </div>
-      <div class="bg-gradient-to-r from-blue-400 to-indigo-500 text-white p-4 rounded-lg shadow-md">
-        <h3 class="font-semibold">Audio</h3>
-        <p>80 files</p>
-      </div>
+         </a>
     </div>
 
 {% endblock %}

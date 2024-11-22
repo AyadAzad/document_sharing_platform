@@ -2,24 +2,26 @@
 
 {% block content %}
 
-    <h3 class="font-semibold mb-2">Files</h3>
+    <h3 class="font-semibold mb-2">Documents</h3>
     <div class="grid grid-cols-2 gap-4 mb-6">
+    {% for transfer in sent_summary %}
       <div class="bg-zinc-200 p-4 rounded-lg shadow-md">
-        <h4 class="font-semibold">Exam</h4>
-        <p>920 files</p>
+        <h4 class="font-semibold">{{ transfer.title }} </h4>
+        <p>{{ transfer.file_count }}</p>
       </div>
-      <div class="bg-zinc-200 p-4 rounded-lg shadow-md">
-        <h4 class="font-semibold">Quiz</h4>
-        <p>115 files</p>
-      </div>
-      <div class="bg-zinc-200 p-4 rounded-lg shadow-md">
-        <h4 class="font-semibold">School</h4>
-        <p>65 files</p>
-      </div>
-      <div class="bg-zinc-200 p-4 rounded-lg shadow-md">
-        <h4 class="font-semibold">Archive</h4>
-        <p>3 files</p>
-      </div>
+        {% endfor %}
+{#      <div class="bg-zinc-200 p-4 rounded-lg shadow-md">#}
+{#        <h4 class="font-semibold">Quiz</h4>#}
+{#        <p>115 files</p>#}
+{#      </div>#}
+{#      <div class="bg-zinc-200 p-4 rounded-lg shadow-md">#}
+{#        <h4 class="font-semibold">School</h4>#}
+{#        <p>65 files</p>#}
+{#      </div>#}
+{#      <div class="bg-zinc-200 p-4 rounded-lg shadow-md">#}
+{#        <h4 class="font-semibold">Archive</h4>#}
+{#        <p>3 files</p>#}
+{#      </div>#}
     </div>
 
 {% endblock %}

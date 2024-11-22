@@ -2,24 +2,24 @@
 {% block content %}
 {% if user.is_authenticated %}
     <aside class="w-64 bg-blue-600 text-white p-6 shadow-lg rounded-lg min-h-screen flex flex-col justify-between">
-        <!-- User Profile Section -->
         <div>
             <div class="flex items-center mb-8">
-                <img src="https://openui.fly.dev/openui/64x64.svg?text=👤" alt="User Profile"
-                     class="rounded-full w-16 h-16 border-4 border-white shadow-lg" />
-                <h2 class="ml-4 text-xl font-semibold">{{ user.first_name }} {{ user.last_name }}</h2>
+                <div class="border border-white rounded-full p-2 bg-purple-600">
+                <h1>{{ user.first_name }}</h1>
+                </div>
+                <h2 class="ml-4 text-xl font-semibold">{{ user.first_name.capitalize }} {{ user.last_name.capitalize }}</h2>
             </div>
 
             <!-- Navigation Links -->
             <nav class="flex flex-col space-y-2">
-                <a href="#" class="py-3 px-4 text-white bg-blue-700 rounded-lg hover:bg-blue-800 shadow-sm transition duration-300">
+                <a href="{% url 'user_profile' %}" class="py-3 px-4 text-white bg-blue-700 rounded-lg hover:bg-blue-800 shadow-sm transition duration-300">
                     My Profile
                 </a>
                 <a href="{% url 'received_documents' %}" class="py-3 px-4 text-white bg-blue-700 rounded-lg hover:bg-blue-800 shadow-sm transition duration-300">
-                    Shared Files
+                    Received Documents
                 </a>
                 <a href="{% url 'send_document' %}" class="py-3 px-4 text-white bg-blue-700 rounded-lg hover:bg-blue-800 shadow-sm transition duration-300">
-                    Upload Files
+                    Upload Document
                 </a>
             </nav>
         </div>
