@@ -10,7 +10,7 @@
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg border border-gray-200">
             <div class="text-center mb-6">
                 <h1 class="text-3xl font-bold text-gray-800">Profile</h1>
-                <p class="text-gray-500 mt-1">Welcome, {{ request.user.first_name }}!</p>
+                <p class="text-gray-500 mt-1">Welcome, {{ request.user.first_name.capitalize }}!</p>
             </div>
 
             <!-- User Information Section -->
@@ -18,13 +18,13 @@
                 <!-- First Name -->
                 <div class="flex items-center justify-between border-b pb-3">
                     <span class="font-semibold">First Name:</span>
-                    <span>{{ request.user.first_name }}</span>
+                    <span>{{ request.user.first_name.capitalize }}</span>
                 </div>
 
                 <!-- Last Name -->
                 <div class="flex items-center justify-between border-b pb-3">
                     <span class="font-semibold">Last Name:</span>
-                    <span>{{ request.user.last_name }}</span>
+                    <span>{{ request.user.last_name.capitalize }}</span>
                 </div>
 
                 <!-- Email -->
@@ -52,7 +52,7 @@
                 </a>
             </div>
             <br>
-            <p class="text-black font-bold space-y-4">if you want to change your details, contact the website admin !!</p>
+            <p class="text-black font-bold space-y-4">For any updates to your account details, please contact the website administrator.</p>
         </div>
     </main>
 </div>

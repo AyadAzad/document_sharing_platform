@@ -11,7 +11,7 @@
             {% for transfer, files in sent_files_by_transfer.items %}
                 <div class="bg-white shadow-md rounded-lg p-6 border border-green-700 hover:border-green-700 transition-all duration-300">
                     <h2 class="text-2xl font-semibold mb-4">📤 {{ transfer.title }} to
-                        <span class="text-green-600">{{ transfer.recipient.first_name }} {{ transfer.recipient.last_name }}</span> at {{ transfer.transferred_at|date:"F j, Y, g:i a" }}</h2>
+                        <span class="text-green-600">{{ transfer.recipient.first_name.capitalize }} {{ transfer.recipient.last_name.capitalize }}</span> at {{ transfer.transferred_at|date:"F j, Y, g:i a" }}</h2>
                     <br>
                     <div class="bg-gray-50 p-4 rounded-lg mt-4 border border-gray-600">
                         <p class="italic text-gray-600">{{ transfer.documents.first.note }}</p>

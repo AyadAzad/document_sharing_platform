@@ -11,6 +11,12 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from pathlib import Path
+import pytz
+from django.utils import timezone
+
+
+def hero(request):
+    return render(request, 'hero.html', {})
 
 
 @login_required
@@ -60,7 +66,7 @@ AES_KEY = os.urandom(32)
 @login_required
 def send_document(request):
     if request.method == "POST":
-        form = UploadFileForm(request.POST, request.FILES)
+        form = UploadFileForm(request.POST, request.FILES, current_user=request.user)
         files = request.FILES.getlist('file')
 
         if form.is_valid():
@@ -84,7 +90,14 @@ def send_document(request):
             os.remove(encrypted_aes_key_path)
 
             title = form.cleaned_data.get('title')
-            transfer = FileTransfer.objects.create(sender=request.user, recipient=recipient, title=title)
+            baghdad_timezone = pytz.timezone("Asia/Baghdad")
+            transferred_at_iq_time = timezone.now().astimezone(baghdad_timezone)
+            transfer = FileTransfer.objects.create(
+                sender=request.user,
+                recipient=recipient,
+                title=title,
+                transferred_at=transferred_at_iq_time
+            )
             for file in files:
                 encrypted_document = encrypt_file(file, AES_KEY, file.name)
                 documents = Documents.objects.create(
@@ -99,7 +112,7 @@ def send_document(request):
             transfer.save()
             return redirect("home")
     else:
-        form = UploadFileForm()
+        form = UploadFileForm(current_user=request.user)
     return render(request, "upload.html", {'form': form})
 
 

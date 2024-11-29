@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from .models import Documents, CustomUser, UserKeys
 from django.contrib.auth.forms import AuthenticationForm
 from quantcrypt.kem import Kyber
-
+import os
 
 class SignupForm(forms.Form):
     # Fields as before
@@ -66,7 +66,7 @@ class SignupForm(forms.Form):
         email = self.cleaned_data.get('email')
         if not email.endswith("@komar.edu.iq"):
             raise ValidationError("Email must end with @komar.edu.iq")
-        if re.search(r'f/d+', email, re.IGNORECASE):
+        if re.search(r'f\d+', email, re.IGNORECASE):
             raise ValidationError("Students cannot join this platform")
         return email
 
@@ -120,12 +120,26 @@ class MultipleFileField(forms.FileField):
         super().__init__(*args, **kwargs)
 
     def clean(self, data, initial=True):
+        # Run the default cleaning for each file
         single_file_clean = super().clean
+        valid_extensions = ('.pdf', '.docx')
+
+        # Check if data is a list of files (multiple files uploaded)
         if isinstance(data, (list, tuple)):
-            result = [single_file_clean(d, initial) for d in data]
+            for file in data:
+                # Clean each file individually
+                single_file_clean(file, initial)
+
+                # Validate the extension of each file
+                if not file.name.lower().endswith(valid_extensions):
+                    raise ValidationError("Only PDF or DOCX files are allowed.")
         else:
-            result = single_file_clean(data, initial)
-        return result
+            # Clean and validate a single file
+            single_file_clean(data, initial)
+            if not data.name.lower().endswith(valid_extensions):
+                raise ValidationError("Only PDF or DOCX files are allowed.")
+
+        return data
 
 
 class UploadFileForm(forms.ModelForm):

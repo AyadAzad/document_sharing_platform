@@ -11,21 +11,19 @@
             {% for transfer, files in decrypted_files_by_transfer.items %}
                 <div class="bg-white shadow-md rounded-lg p-6 border border-blue-700 hover:border-blue-700 transition-all duration-300">
                     <h2 class="text-2xl font-semibold mb-4">📄 {{ transfer.title }} from
-                        <span class="text-blue-600">{{ transfer.sender.first_name }} {{ transfer.sender.last_name }}</span> at {{ transfer.transferred_at }}</h2>
+                        <span class="text-blue-600">{{ transfer.sender.first_name.capitalize }} {{ transfer.sender.last_name.capitalize }}</span> at {{ transfer.transferred_at }}</h2>
                     <br>
                     <div class="bg-gray-50 p-4 rounded-lg mt-4 border border-gray-600">
                         <p class="italic text-gray-600">{{ transfer.documents.first.note }}</p>
                     </div>
-                    <br>
-                    <ul class="list-disc pl-6 mb-4 space-y-2">
-                        {% for document in transfer.documents.all %}
-                            <li class="text-lg"><a href="{{ document.file.url }}" class="text-blue-500 hover:underline">{{ document.name }}</a></li>
-                        {% endfor %}
-                    </ul>
+{#                    <ul class="list-disc pl-6 mb-4 space-y-2">#}
+{#                        {% for document in transfer.documents.all %}#}
+{#                            <li class="text-lg"><a href="{{ document.file.url }}" class="text-blue-500 hover:underline">{{ document.name }}</a></li>#}
+{#                        {% endfor %}#}
+{#                    </ul>#}
 
                     {% if files %}
     <div class="mt-4">
-        <h3 class="font-semibold text-lg text-gray-800">Decrypted Files</h3>
         <ul class="list-disc pl-6 mt-2">
             {% for file in files %}
                 <li class="text-lg">

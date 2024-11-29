@@ -4,12 +4,11 @@ from django.conf import settings
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, username, first_name, last_name, role, password=None):
+    def create_user(self, email, first_name, last_name, role, password=None):
         if not email:
             raise ValueError("Users must have an email address")
         user = self.model(
             email=self.normalize_email(email),
-            username=username,
             first_name=first_name,
             last_name=last_name,
             role=role
@@ -18,9 +17,9 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, first_name, last_name, role, password=None):
-        user = self.create_user(email, username, first_name, last_name, role, password)
-        user.is_admin = True
+    def create_superuser(self, email, first_name, last_name, role, password=None):
+        user = self.create_user(email, first_name, last_name, role, password)
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -38,15 +37,23 @@ class CustomUser(AbstractBaseUser):
     last_name = models.CharField(max_length=50)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    public_key = models.BinaryField(default=None, null=False)
+    is_staff = models.BooleanField(default=False)
+    public_key = models.BinaryField(default=None, null=True)
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'role']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'role']
 
     def __str__(self):
         return self.email
+
+    def has_perm(self, perm, obj=None):
+        # Return True for now, customize as needed
+        return True
+
+    def has_module_perms(self, app_label):
+        # Return True for now, customize as needed
+        return True
 
 
 class UserKeys(models.Model):
@@ -54,7 +61,7 @@ class UserKeys(models.Model):
     private_key = models.BinaryField(default=None, null=False)
 
     def __str__(self):
-        return f"AES key for {self.private_key}"
+        return f"{self.private_key}"
 
 
 class Documents(models.Model):
