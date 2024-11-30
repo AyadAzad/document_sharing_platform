@@ -2,7 +2,9 @@
 
 {% block content %}
 <div class="flex flex-col md:flex-row bg-gray-100">
-    {% include 'sidebar.html' %}
+<aside class="bg-gray-800 text-white p-6 md:h-screen">
+        {% include 'sidebar.html' %}
+    </aside>
     <main class="flex-1 p-6 bg-white shadow-lg rounded-lg">
         {% include 'searchbar.html' %}
         <h1 class="text-4xl font-extrabold text-gray-800 mt-6 mb-8">Sent Documents</h1>

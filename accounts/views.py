@@ -13,7 +13,9 @@ from django.conf import settings
 from pathlib import Path
 import pytz
 from django.utils import timezone
-import matplotlib.pyplot as plt
+
+import time
+
 
 def hero(request):
     return render(request, 'hero.html', {})
@@ -21,39 +23,17 @@ def hero(request):
 
 @login_required
 def home(request):
+    # Get counts, default to 0 if no related objects exist
     total_documents = Documents.objects.count()
     total_active_users = CustomUser.objects.filter(is_active=True).count()
     total_received_documents = Documents.objects.filter(transfers__recipient=request.user).count()
     total_sent_documents = Documents.objects.filter(transfers__sender=request.user).count()
-
-    pie_labels = ['Sent Documents', 'Received Documents']
-    pie_data = [total_received_documents, total_sent_documents]
-    plt.figure(figsize=(6,6))
-    plt.pie(pie_data, labels=pie_labels, autopct='%1.1f%%', colors=['#FF6384', '#36A2EB'])
-    plt.title('Sent VS Received Documents')
-    pie_path = os.path.join(settings.MEDIA_ROOT, 'charts', 'pie_chart.png')
-    os.makedirs(os.path.dirname(pie_path), exist_ok=True)
-    plt.savefig(pie_path)
-    plt.close()
-
-    # Create Bar Chart
-    bar_labels = ['Sent Documents', 'Received Documents']
-    bar_data = [total_sent_documents, total_received_documents]
-    plt.figure(figsize=(6, 6))
-    plt.bar(bar_labels, bar_data, color=['#FF6384', '#36A2EB'])
-    plt.title('Comparison of Sent and Received Documents')
-    plt.ylabel('Number of Documents')
-    bar_path = os.path.join(settings.MEDIA_ROOT, 'charts', 'bar_chart.png')
-    plt.savefig(bar_path)
-    plt.close()
 
     context = {
         'total_documents': total_documents,
         'total_active_users': total_active_users,
         'total_received_documents': total_received_documents,
         'total_sent_documents': total_sent_documents,
-        'pie_chart_url': pie_path.replace(settings.MEDIA_ROOT, '/media/'),
-        'bar_chart_url': bar_path.replace(settings.MEDIA_ROOT, '/media/'),
     }
     return render(request, 'home.html', context)
 
@@ -104,6 +84,7 @@ def send_document(request):
         files = request.FILES.getlist('file')
 
         if form.is_valid():
+            start_time = time.time()
             recipient = form.cleaned_data.get('recipient_email')
             recipient_user = get_object_or_404(CustomUser, email=recipient)
             recipient_public_key = recipient_user.public_key
@@ -142,8 +123,12 @@ def send_document(request):
                     aes_key=encrypted_aes_key,
 
                 )
+
                 transfer.documents.add(documents)
             transfer.save()
+            end_time = time.time()
+            time_taken = end_time - start_time
+            print(f"time taken to send documents : {time_taken:.2f} seconds ")
             return redirect("home")
     else:
         form = UploadFileForm(current_user=request.user)
@@ -152,6 +137,7 @@ def send_document(request):
 
 @login_required
 def received_documents(request):
+    start_time = time.time()
     transfers = (FileTransfer.objects.filter(recipient=request.user)
                  .select_related('sender')
                  .prefetch_related('documents'))  # Prefetch related 'documents' to optimize queries
@@ -205,12 +191,19 @@ def received_documents(request):
 
                 # Create the URL for the decrypted file
                 decrypted_file_url = os.path.join(settings.MEDIA_URL, 'decrypted_files', decrypted_file_name)
-
+                file_size_mb = os.path.getsize(encrypted_file_path) / (1024 * 1024)
                 # Append a dictionary with name and URL to the decrypted files list
-                decrypted_files.append({'name': cleaned_file_name, 'url': decrypted_file_url})
+                decrypted_files.append({'name': cleaned_file_name,
+                                        'url': decrypted_file_url,
+                                        'size': f"{file_size_mb:.2f} MB",
+
+                                        })
 
         # Store decrypted files for the current transfer in the dictionary
         decrypted_files_by_transfer[transfer] = decrypted_files
+    end_time = time.time()
+    taken_time = end_time - start_time
+    print(f"time taken to receive files : {taken_time:.2f} seconds ")
 
     return render(request, 'received_documents.html', {'decrypted_files_by_transfer': decrypted_files_by_transfer})
 
@@ -224,9 +217,9 @@ def sent_documents(request):
     # Dictionary to store the details of sent documents (no decryption needed)
     sent_files_by_transfer = {}
 
-    # Iterate over each transfer and collect details about the sent documents
+
     for transfer in transfers:
-        sent_files = []  # List to hold the sent files for the current transfer
+        sent_files = []
 
         if transfer.documents.exists():
             for document in transfer.documents.all():
@@ -239,35 +232,4 @@ def sent_documents(request):
 
         # Store the list of sent files for the current transfer in the dictionary
         sent_files_by_transfer[transfer] = sent_files
-
     return render(request, 'sent_documents.html', {'sent_files_by_transfer': sent_files_by_transfer})
-
-
-def file_summary_view(request):
-    # Get sent or received files, adjust based on your logic
-    sent_transfers = Documents.objects.filter(sender=request.user)
-    received_transfers = Documents.objects.filter(recipient=request.user)
-
-    # Prepare data for the template
-    sent_summary = [
-        {
-            "title": transfer.title,
-            "file_count": transfer.documents.count()  # Assuming `documents` is a related name for files
-        }
-        for transfer in sent_transfers
-    ]
-
-    received_summary = [
-        {
-            "title": transfer.title,
-            "file_count": transfer.documents.count()
-        }
-        for transfer in received_transfers
-    ]
-
-    context = {
-        "sent_summary": sent_summary,
-        "received_summary": received_summary,
-    }
-
-    return render(request, 'files.html', context)

@@ -2,11 +2,11 @@
 
 {% block content %}
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-50">
-    {% include 'sidebar.html' %}
-
+<aside class="bg-gray-800 text-white p-6 md:h-screen">
+        {% include 'sidebar.html' %}
+    </aside>
     <main class="flex-1 p-8 bg-white shadow-lg rounded-lg mx-auto my-6 md:my-0 md:mx-8">
         <h1 class="text-3xl font-extrabold text-gray-800 mt-6 mb-4">Upload Documents</h1>
-
         <form id="uploadForm" method="POST" enctype="multipart/form-data" action="{% url 'send_document' %}" class="space-y-6">
             <h3 class="text-xl font-semibold text-gray-600 mb-2">Select one or more documents</h3>
 
