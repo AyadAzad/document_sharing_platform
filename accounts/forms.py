@@ -13,7 +13,7 @@ class SignupForm(forms.Form):
         max_length=50,
         required=True,
         label="First Name",
-        widget=forms.TextInput(attrs={'class': 'w-full px-4 py-2 rounded-lg border border-gray-300',
+        widget=forms.TextInput(attrs={'class': 'w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-100',
                                       'placeholder': "Enter your first name"})
     )
     last_name = forms.CharField(

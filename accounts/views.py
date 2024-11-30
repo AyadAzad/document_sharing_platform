@@ -13,7 +13,7 @@ from django.conf import settings
 from pathlib import Path
 import pytz
 from django.utils import timezone
-
+import matplotlib.pyplot as plt
 
 def hero(request):
     return render(request, 'hero.html', {})
@@ -21,7 +21,41 @@ def hero(request):
 
 @login_required
 def home(request):
-    return render(request, 'home.html', {})
+    total_documents = Documents.objects.count()
+    total_active_users = CustomUser.objects.filter(is_active=True).count()
+    total_received_documents = Documents.objects.filter(transfers__recipient=request.user).count()
+    total_sent_documents = Documents.objects.filter(transfers__sender=request.user).count()
+
+    pie_labels = ['Sent Documents', 'Received Documents']
+    pie_data = [total_received_documents, total_sent_documents]
+    plt.figure(figsize=(6,6))
+    plt.pie(pie_data, labels=pie_labels, autopct='%1.1f%%', colors=['#FF6384', '#36A2EB'])
+    plt.title('Sent VS Received Documents')
+    pie_path = os.path.join(settings.MEDIA_ROOT, 'charts', 'pie_chart.png')
+    os.makedirs(os.path.dirname(pie_path), exist_ok=True)
+    plt.savefig(pie_path)
+    plt.close()
+
+    # Create Bar Chart
+    bar_labels = ['Sent Documents', 'Received Documents']
+    bar_data = [total_sent_documents, total_received_documents]
+    plt.figure(figsize=(6, 6))
+    plt.bar(bar_labels, bar_data, color=['#FF6384', '#36A2EB'])
+    plt.title('Comparison of Sent and Received Documents')
+    plt.ylabel('Number of Documents')
+    bar_path = os.path.join(settings.MEDIA_ROOT, 'charts', 'bar_chart.png')
+    plt.savefig(bar_path)
+    plt.close()
+
+    context = {
+        'total_documents': total_documents,
+        'total_active_users': total_active_users,
+        'total_received_documents': total_received_documents,
+        'total_sent_documents': total_sent_documents,
+        'pie_chart_url': pie_path.replace(settings.MEDIA_ROOT, '/media/'),
+        'bar_chart_url': bar_path.replace(settings.MEDIA_ROOT, '/media/'),
+    }
+    return render(request, 'home.html', context)
 
 
 def user_information(request):

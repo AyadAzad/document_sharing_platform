@@ -1,25 +1,64 @@
-{% extends "_base.html" %}
-
 {% block content %}
 <div class="flex flex-col md:flex-row bg-background">
     {% include 'sidebar.html' %}
     <main class="flex-1 p-6 bg-background">
+        <!-- Header Section -->
         <section class="flex flex-row justify-between items-center p-3">
             <div class="flex items-center space-x-4">
-                <!-- Logo Styling -->
-                <img src="/static/assets/kust logo.jpeg"
-                     alt="Komar University Logo"
-                     class="border border-gray-300 shadow-lg rounded-full transition-transform duration-300 hover:scale-105"
-                     width="100" height="100"/>
-                <!-- Title Styling -->
-                <h2 class="text-3xl font-bold text-blue-700 bg-gradient-to-r from-blue-500 to-green-400 text-transparent bg-clip-text animate-pulse">
-                    Komar Document Sharing Platform
-                </h2>
+                <img src="/static/assets/kust logo.jpeg" alt="Komar University Logo" class="border border-gray-300 shadow-lg rounded-full" width="100" height="100"/>
+                <h2 class="text-3xl font-bold text-blue-700">Komar Document Sharing Platform</h2>
             </div>
         </section>
 
+        <!-- Welcome Section -->
+<section class="bg-center bg-no-repeat bg-[url('https://hr.komar.edu.iq/wp-content/uploads/sites/10/2023/03/Komar-cover-1536x1024.jpg')] bg-gray-700 bg-blend-multiply rounded-2xl">
+    <div class="px-4 mx-auto max-w-screen-xl text-center py-24 lg:py-56">
+        <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-white md:text-5xl lg:text-6xl">Welcome back {{ user.first_name.capitalize }} {{ user.last_name.capitalize }}</h1>
+        <p class="mb-8 text-lg font-normal text-gray-300 lg:text-xl sm:px-16 lg:px-48">Start Sharing your document in the most secure way and easiest way. </p>
+        <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0">
+            <a href="{% url 'send_document' %}" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+                Share Document
+                <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"></path>
+                </svg>
+            </a>
+            <a href="#see_more" class="inline-flex justify-center hover:text-gray-900 items-center py-3 px-5 sm:ms-4 text-base font-medium text-center text-white rounded-lg border border-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-400">
+                Learn more
+            </a>
+        </div>
+    </div>
+</section>
+
+        <section id="see_more" class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+            <div class="p-4 bg-white shadow rounded-lg">
+                <h3 class="text-xl font-bold text-gray-700">Total Documents</h3>
+                <p class="text-4xl font-bold text-blue-500">{{ total_documents }}</p>
+            </div>
+            <div class="p-4 bg-white shadow rounded-lg">
+                <h3 class="text-xl font-bold text-gray-700">Total Active Users</h3>
+                <p class="text-4xl font-bold text-green-500">{{ total_active_users }}</p>
+            </div>
+            <div class="p-4 bg-white shadow rounded-lg">
+                <h3 class="text-xl font-bold text-gray-700">Total Received Docs</h3>
+                <p class="text-4xl font-bold text-green-500">{{ total_received_documents }}</p>
+            </div>
+            <div class="p-4 bg-white shadow rounded-lg">
+                <h3 class="text-xl font-bold text-gray-700">Total Sent Docs</h3>
+                <p class="text-4xl font-bold text-green-500">{{ total_sent_documents }}</p>
+            </div>
+
+             <!-- Total Documents Pie Chart -->
+            <div class="p-4 bg-white shadow rounded-lg">
+                <img src="{{ pie_chart_url }}" alt="Pie Chart">
+            </div>
+            <!-- Sent vs Received Bar Chart -->
+            <div class="p-4 bg-white shadow rounded-lg">
+                <img src="{{ bar_chart_url }}" alt="Bar Chart">
+            </div>
+        </section>
         {% include 'category.html' %}
-        {% include 'files.html' %}
+
+
     </main>
 </div>
 {% endblock content %}

@@ -1,37 +1,90 @@
 {% extends '_base.html' %}
 {% block content %}
 {% if user.is_authenticated %}
-    <aside class="w-64 bg-blue-600 text-white p-6 shadow-lg min-h-screen flex flex-col justify-between">
-        <div>
-            <div class="flex items-center mb-8">
-                <div class="border border-white rounded-full p-2 bg-purple-600">
-                <h1>{{ user.first_name|slice:":1" }}</h1>
-                </div>
-                <h2 class="ml-4 text-xl font-semibold">{{ user.first_name.capitalize }} {{ user.last_name.capitalize }}</h2>
-            </div>
+<aside id="cta-button-sidebar" class=" sticky w-64 transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+   <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+      <ul class="space-y-2 font-medium">
+         <li class="flex flex-row items-center">
+                <svg height="100" width="100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Define a gradient with friendly colors -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #0d4a63; stop-opacity: 1" />
+      <stop offset="100%" style="stop-color: #158fc2; stop-opacity: 1" />
+    </linearGradient>
+  </defs>
+  <!-- Draw the circle -->
+  <circle cx="50" cy="50" r="45" fill="url(#grad1)" stroke="green" stroke-width="5" />
+  <!-- Add the centered text -->
+  <text
+    fill="#ffffff"
+    font-size="45"
+    font-family="Verdana, sans-serif"
+    x="50"
+    y="57"
+    text-anchor="middle"
+    dominant-baseline="middle"
+  >
+    {{ user.first_name.capitalize|slice:":1" }}
+  </text>
+</svg>
+<p class="text-2xl text-white">{{ user.first_name.capitalize|slice:"1:" }}</p>
+         </li>
+         <li>
+            <a href="{% url 'user_profile' %}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M4 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4Zm10 5a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm0 3a1 1 0 0 1 1-1h3a1 1 0 1 1 0 2h-3a1 1 0 0 1-1-1Zm-8-5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm1.942 4a3 3 0 0 0-2.847 2.051l-.044.133-.004.012c-.042.126-.055.167-.042.195.006.013.02.023.038.039.032.025.08.064.146.155A1 1 0 0 0 6 17h6a1 1 0 0 0 .811-.415.713.713 0 0 1 .146-.155c.019-.016.031-.026.038-.04.014-.027 0-.068-.042-.194l-.004-.012-.044-.133A3 3 0 0 0 10.059 14H7.942Z" clip-rule="evenodd"/>
+</svg>
 
-            <!-- Navigation Links -->
-            <nav class="flex flex-col space-y-2">
-                <a href="{% url 'user_profile' %}" class="py-3 px-4 text-white bg-blue-700 rounded-lg hover:bg-blue-800 shadow-sm transition duration-300">
-                    My Profile
-                </a>
-                <a href="{% url 'received_documents' %}" class="py-3 px-4 text-white bg-blue-700 rounded-lg hover:bg-blue-800 shadow-sm transition duration-300">
-                    Received Documents
-                </a>
-                <a href="{% url 'send_document' %}" class="py-3 px-4 text-white bg-blue-700 rounded-lg hover:bg-blue-800 shadow-sm transition duration-300">
-                    Upload Document
-                </a>
-            </nav>
-        </div>
+               <span class="flex-1 ms-3 whitespace-nowrap">Profile</span>
+            </a>
+         </li>
+          <li>
+            <a href="{% url 'send_document' %}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+               <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h3a3 3 0 0 0 0-6h-.025a5.56 5.56 0 0 0 .025-.5A5.5 5.5 0 0 0 7.207 9.021C7.137 9.017 7.071 9 7 9a4 4 0 1 0 0 8h2.167M12 19v-9m0 0-2 2m2-2 2 2"/>
+</svg>
 
-        <!-- Logout Button -->
-        <form method="post" action="{% url 'logout' %}" class="mt-6">
-            {% csrf_token %}
-            <button type="submit"
-                    class="w-full py-3 px-4 text-white bg-red-500 rounded-lg font-semibold hover:bg-red-600 shadow-md transition duration-300">
-                Logout
+               <span class="flex-1 ms-3 whitespace-nowrap">Send Document</span>
+            </a>
+         </li>
+         <li>
+            <a href="{% url 'received_documents' %}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+               <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2m-8 1V4m0 12-4-4m4 4 4-4"/>
+</svg>
+
+               <span class="flex-1 ms-3 whitespace-nowrap">Received Documents</span>
+{#               <span class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>#}
+            </a>
+         </li>
+         <li>
+            <a href="{% url 'logout' %}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"></path>
+</svg>
+
+               <span class="flex-1 ms-3 whitespace-nowrap">Log Out</span>
+            </a>
+         </li>
+      </ul>
+      <div id="dropdown-cta" class="p-4 mt-6 rounded-lg bg-blue-50 dark:bg-blue-900" role="alert">
+         <div class="flex items-center mb-3">
+            <span class="bg-orange-100 text-orange-800 text-sm font-semibold me-2 px-2.5 py-0.5 rounded dark:bg-orange-200 dark:text-orange-900">Beta</span>
+            <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-blue-50 inline-flex justify-center items-center w-6 h-6 text-blue-900 rounded-lg focus:ring-2 focus:ring-blue-400 p-1 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-400 dark:hover:bg-blue-800" data-dismiss-target="#dropdown-cta" aria-label="Close">
+               <span class="sr-only">Close</span>
+               <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+               </svg>
             </button>
-        </form>
-    </aside>
+         </div>
+         <p class="mb-3 text-sm text-blue-800 dark:text-blue-400">
+            This Document Sharing Platform has more features to come and this version is just a beta for the evaluators to check it out.
+         </p>
+      </div>
+   </div>
+</aside>
+
+
 {% endif %}
 {% endblock %}

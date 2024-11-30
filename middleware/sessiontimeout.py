@@ -15,7 +15,7 @@ class SessionTimeoutMiddleware:
 
             if last_activity:
                 last_activity = datetime.datetime.strptime(last_activity, '%Y-%m-%d %H:%M:%S')
-                if (datetime.datetime.now() - last_activity).seconds > 60:
+                if (datetime.datetime.now() - last_activity).seconds > 120:
                     logout(request)  # Log the user out
                     # Show a message and redirect to the login page
                     messages.info(request, "Your session has expired due to inactivity. Please log in again.")
