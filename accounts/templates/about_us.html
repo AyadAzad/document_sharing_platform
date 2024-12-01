@@ -1,0 +1,31 @@
+{% include '_base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="sm:flex items-center max-w-screen-xl">
+    <div class="sm:w-1/2 p-10">
+        <div class="image object-center text-center">
+            <img src="https://i.imgur.com/WbQnbas.png">
+        </div>
+    </div>
+    <div class="sm:w-1/2 p-5">
+        <div class="text mt-20">
+            <span class="text-gray-500 border-b-2 border-indigo-600 uppercase">About us</span>
+            <h2 class="my-4 font-bold text-3xl  sm:text-4xl ">About <span class="text-indigo-600">Our Project</span>
+            </h2>
+            <p class="text-gray-700">
+Welcome to our Document Sharing Platform, a secure and innovative solution designed for seamless file sharing among university staff and other professionals. Our mission is to provide a user-friendly platform that ensures the highest level of security and confidentiality in document exchange.
+            </p>
+            <br>
+            <h2 class="my-4 font-bold text-3xl  sm:text-4xl ">Who <span class="text-indigo-600">We Are</span>
+            </h2>
+            <p class="text-gray-700">
+We are a team of passionate developers and researchers committed to revolutionizing secure document sharing by integrating Post-Quantum Cryptography (PQC) and Advanced Encryption Standards (AES). Our platform leverages cutting-edge cryptographic techniques to safeguard your files against unauthorized access, even in the era of quantum computing.
+Our Vision
+To create a reliable, efficient, and future-ready document-sharing system that serves as a benchmark for secure digital collaboration in academic and professional settings.
+            </p>
+        </div>
+    </div>
+</div>
+    {% include 'footer.html' %}
+
+{% endblock %}

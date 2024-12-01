@@ -43,6 +43,13 @@ def user_information(request):
     return render(request, 'my_profile.html', {'user_info': user_info})
 
 
+def about_us(request):
+    return render(request, 'about_us.html')
+
+
+def feature(request):
+    return render(request, 'feature.html')
+
 def signup_view(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)

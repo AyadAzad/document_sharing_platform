@@ -11,4 +11,6 @@ urlpatterns = [
     path('received-documents/', views.received_documents, name='received_documents'),
     path('profile/', views.user_information, name='user_profile'),
     path('sent-documents/', views.sent_documents, name='sent_documents'),
+    path('about-us/', views.about_us, name='about_us'),
+    path('feature/', views.feature, name='feature'),
 ]
