@@ -13,4 +13,8 @@ urlpatterns = [
     path('sent-documents/', views.sent_documents, name='sent_documents'),
     path('about-us/', views.about_us, name='about_us'),
     path('feature/', views.feature, name='feature'),
+    path('security/', views.security, name='security'),
+    path('contact-us/', views.contact_us, name='contact_us'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('licensing/', views.licensing, name='licensing'),
 ]

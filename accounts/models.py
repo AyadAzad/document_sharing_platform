@@ -48,11 +48,9 @@ class CustomUser(AbstractBaseUser):
         return self.email
 
     def has_perm(self, perm, obj=None):
-        # Return True for now, customize as needed
         return True
 
     def has_module_perms(self, app_label):
-        # Return True for now, customize as needed
         return True
 
 

@@ -9,34 +9,32 @@
         <h1 class="text-4xl font-extrabold text-gray-800 mt-6 mb-8">Received Documents</h1>
 
         <div class="space-y-6">
-            {% for transfer, files in decrypted_files_by_transfer.items %}
-                <div class="bg-white shadow-md rounded-lg p-6 border border-blue-700 hover:border-blue-700 transition-all duration-300">
-                    <h2 class="text-2xl font-semibold mb-4">📄 {{ transfer.title }} from
-                        <span class="text-blue-600">{{ transfer.sender.first_name.capitalize }} {{ transfer.sender.last_name.capitalize }}</span> at {{ transfer.transferred_at }}</h2>
-                    <br>
-                    <div class="bg-gray-50 p-4 rounded-lg mt-4 border border-gray-600">
-                        <p class="italic text-gray-600">{{ transfer.documents.first.note }}</p>
+            {% if decrypted_files_by_transfer %}
+                {% for transfer, files in decrypted_files_by_transfer.items %}
+                    <div class="bg-white shadow-md rounded-lg p-6 border border-blue-700 hover:border-blue-700 transition-all duration-300">
+                        <h2 class="text-2xl font-semibold mb-4">📄 {{ transfer.title }} from
+                            <span class="text-blue-600">{{ transfer.sender.first_name.capitalize }} {{ transfer.sender.last_name.capitalize }}</span> at {{ transfer.transferred_at }}</h2>
+                        <br>
+                        <div class="bg-gray-50 p-4 rounded-lg mt-4 border border-gray-600">
+                            <p class="italic text-gray-600">{{ transfer.documents.first.note }}</p>
+                        </div>
+
+                        {% if files %}
+                            <div class="mt-4">
+                                <ul class="list-disc pl-6 mt-2">
+                                    {% for file in files %}
+                                        <li class="text-lg">
+                                            <a href="{{ file.url }}" class="text-blue-500 hover:underline"> {{ file.name }} - {{ file.size }} </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
-{#                    <ul class="list-disc pl-6 mb-4 space-y-2">#}
-{#                        {% for document in transfer.documents.all %}#}
-{#                            <li class="text-lg"><a href="{{ document.file.url }}" class="text-blue-500 hover:underline">{{ document.name }}</a></li>#}
-{#                        {% endfor %}#}
-{#                    </ul>#}
-
-                    {% if files %}
-    <div class="mt-4">
-        <ul class="list-disc pl-6 mt-2">
-            {% for file in files %}
-                <li class="text-lg">
-                    <a href="{{ file.url }}" class="text-blue-500 hover:underline"> {{ file.name }} - {{ file.size }} </a>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
-
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-600 text-lg">No documents have been received.</p>
+            {% endif %}
         </div>
 
         <a href="{% url 'home' %}" class="mt-8 inline-block text-blue-500 hover:underline text-lg">&larr; Go back to the main page</a>

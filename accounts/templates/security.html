@@ -1,0 +1,24 @@
+{% include '_base.html' %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="sm:flex items-center max-w-screen-xl min-h-screen">
+    <div class="sm:w-1/2 p-10">
+        <div class="image object-center text-center">
+            <img src="https://i.imgur.com/WbQnbas.png">
+        </div>
+    </div>
+    <div class="sm:w-1/2 p-5">
+<h2 class="mb-2 text-lg font-semibold text-black border-b-4 uppercase scroll-auto">Our Commitment</h2>
+<ul class="max-w-md space-y-1 text-black list-disc list-inside text-justify">
+    <li>We utilize Advanced Encryption Standard (AES) and Post-Quantum Cryptography to protect your files against both current and future threats, including quantum computing risks.</li>
+                <li>The platform adheres to global data protection standards, ensuring your information is handled with the utmost care and confidentiality.</li>
+                <li>All Documents are encrypted before sharing, stored securely, and accessible only to the intended recipients. This ensures complete control over your data at all times.</li>
+                <li>Robust user authentication mechanisms prevent unauthorized access, guaranteeing that only verified users can interact with the platform.</li>
+                <li>Every document shared through the platform undergoes rigorous checks to maintain its integrity, ensuring it remains unaltered during storage or transfer.</li>
+</ul>
+
+    </div>
+</div>
+    {% include 'footer.html' %}
+
+{% endblock %}

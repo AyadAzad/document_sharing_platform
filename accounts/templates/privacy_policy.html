@@ -1,0 +1,71 @@
+{% include '_base.html' %}
+
+{% block content %}
+{% include 'navbar.html' %}
+    <div class="bg-gray-50 py-16 px-8 sm:px-12 lg:px-24 min-h-screen">
+  <div class="max-w-6xl mx-auto mt-10">
+    <h2 class="text-3xl font-bold text-gray-800 text-center mb-8">
+      Privacy Policy
+    </h2>
+    <p class="text-gray-600 text-lg leading-relaxed mb-6">
+      At Komar Document Sharing, we are committed to protecting your privacy and ensuring the security of your data. This Privacy Policy explains how we collect, use, and safeguard your information when you use our platform.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Data Collection Section -->
+      <div>
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">
+          1. Data Collection
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          We collect only the necessary information to provide our services, such as your name, email address, and uploaded documents. We do not collect sensitive information without your explicit consent.
+        </p>
+      </div>
+
+      <!-- Data Usage Section -->
+      <div>
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">
+          2. How We Use Your Data
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          Your data is used to provide, maintain, and improve our services. We may also use your email address to send important updates about your account or the platform.
+        </p>
+      </div>
+
+      <!-- Data Security Section -->
+      <div>
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">
+          3. Data Security
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          We implement industry-standard encryption methods, including Advanced Encryption Standard (AES) and Post-Quantum Cryptography (PQC), to protect your documents and personal data from unauthorized access.
+        </p>
+      </div>
+
+      <!-- Third-Party Sharing Section -->
+      <div>
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">
+          4. Third-Party Sharing
+        </h3>
+        <p class="text-gray-600 leading-relaxed">
+          We do not sell or share your data with third parties without your consent, except where required by law. Any third-party services we integrate with are carefully vetted for privacy compliance.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-8 bg-white shadow-md rounded-lg p-6">
+      <h3 class="text-xl font-semibold text-gray-700 mb-4">
+        Your Rights
+      </h3>
+      <p class="text-gray-600 leading-relaxed">
+        You have the right to access, update, or delete your personal data at any time. For more information, or to make a request, contact our support team at
+        <a href="mailto:support@komar.edu.iq" class="text-blue-600 underline">
+          komar@komar.edu.iq
+        </a>.
+      </p>
+    </div>
+  </div>
+</div>
+{% include 'footer.html' %}
+
+{% endblock %}

@@ -50,6 +50,23 @@ def about_us(request):
 def feature(request):
     return render(request, 'feature.html')
 
+
+def security(request):
+    return render(request, 'security.html')
+
+
+def contact_us(request):
+    return render(request, 'contact_us.html')
+
+
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
+
+
+def licensing(request):
+    return render(request, 'licensing.html')
+
+
 def signup_view(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -81,11 +98,11 @@ def logout_view(request):
     return redirect('login')
 
 
-AES_KEY = os.urandom(32)
 
 
 @login_required
 def send_document(request):
+    AES_KEY = os.urandom(32)
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES, current_user=request.user)
         files = request.FILES.getlist('file')
@@ -121,6 +138,7 @@ def send_document(request):
                 transferred_at=transferred_at_iq_time
             )
             for file in files:
+                # AES encryption
                 encrypted_document = encrypt_file(file, AES_KEY, file.name)
                 documents = Documents.objects.create(
                     uploader=request.user,
@@ -128,7 +146,6 @@ def send_document(request):
                     name=encrypted_document.name,
                     note=form.cleaned_data.get('note'),
                     aes_key=encrypted_aes_key,
-
                 )
 
                 transfer.documents.add(documents)
@@ -223,7 +240,6 @@ def sent_documents(request):
 
     # Dictionary to store the details of sent documents (no decryption needed)
     sent_files_by_transfer = {}
-
 
     for transfer in transfers:
         sent_files = []
